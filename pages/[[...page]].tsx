@@ -3,7 +3,7 @@ import { BuilderComponent, builder, Builder } from "@builder.io/react";
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import { componentRegister as backgroundComponentRegister } from "../components/Background";
 
-builder.init(process.env.NEXT_PUBLIC_BUILDER_IO_KEY);
+builder.init('42aedc5d7c084408b4c99cbd0f9a9e09');
 
 backgroundComponentRegister();
 
@@ -64,6 +64,7 @@ export async function getStaticPaths() {
     omit: "data.blocks",
   });
   const paths = pages.map((page) => page.data?.url);
+  console.log("paths: ", paths);
   return {
     paths,
     fallback: "blocking",
