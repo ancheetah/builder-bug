@@ -46,7 +46,7 @@ export async function getStaticProps({
       options: { data: { locale: locale } },
       cachebust: true,
     })
-    .toPromise();
+    .promise() || null;
 
   return {
     props: {
