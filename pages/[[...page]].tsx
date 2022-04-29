@@ -3,7 +3,9 @@ import { BuilderComponent, builder, Builder } from "@builder.io/react";
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 // import { componentRegister as backgroundComponentRegister } from "../components/Background";
 import '../components/Background';
+import { useRouter } from "next/router";
 builder.init('9064ecf563724ff398dcad37ecf1cafa');
+
 
 // backgroundComponentRegister();
 
@@ -12,6 +14,12 @@ export default function Home({
   // locale,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   // builder.setUserAttributes({ locale: 'en' });
+  
+  const router = useRouter()
+  if (router.isFallback) {
+    return <h1>Loading...</h1>
+  }
+
   return (
     <div className="container">
       <Head>
@@ -23,7 +31,7 @@ export default function Home({
         {page || Builder.isPreviewing || Builder.isEditing ? (
           <div>
             <div>
-              <BuilderComponent content={page} model="page" isChild />
+              <BuilderComponent content={page} model="page" />
             </div>
           </div>
         ) : (
