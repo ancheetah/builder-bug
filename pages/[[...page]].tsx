@@ -1,17 +1,17 @@
 import Head from "next/head";
 import { BuilderComponent, builder, Builder } from "@builder.io/react";
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
-import { componentRegister as backgroundComponentRegister } from "../components/Background";
+// import { componentRegister as backgroundComponentRegister } from "../components/Background";
+import '../components/Background';
+builder.init('9064ecf563724ff398dcad37ecf1cafa');
 
-builder.init('42aedc5d7c084408b4c99cbd0f9a9e09');
-
-backgroundComponentRegister();
+// backgroundComponentRegister();
 
 export default function Home({
   page,
-  locale,
+  // locale,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  builder.setUserAttributes({ locale });
+  // builder.setUserAttributes({ locale: 'en' });
   return (
     <div className="container">
       <Head>
@@ -36,14 +36,14 @@ export default function Home({
 
 export async function getStaticProps({
   params,
-  locale = "en",
+  // locale = "en",
 }: GetStaticPropsContext<{ page: string }>) {
   const urlPath = params?.page || "";
 
   const page = await builder
     .get("page", {
-      userAttributes: { urlPath: `/${urlPath || ""}`, locale: locale },
-      options: { data: { locale: locale } },
+      userAttributes: { urlPath: `/${urlPath || ""}`}, // locale: locale },
+      // options: { data: { locale: locale } },
       cachebust: true,
     })
     .promise() || null;
@@ -51,7 +51,7 @@ export async function getStaticProps({
   return {
     props: {
       page,
-      locale,
+      // locale,
     },
     revalidate: 30,
   };
@@ -64,9 +64,8 @@ export async function getStaticPaths() {
     omit: "data.blocks",
   });
   const paths = pages.map((page) => page.data?.url);
-  console.log("paths: ", paths);
   return {
     paths,
-    fallback: "blocking",
+    fallback: true,
   };
 }

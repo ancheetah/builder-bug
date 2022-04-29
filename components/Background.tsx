@@ -9,7 +9,7 @@ export const Background = (props) => {
     </div>;
 };
 
-export async function componentRegister() {
+// export async function componentRegister() {
   Builder.registerComponent(Background, {
     name: "Background",
     inputs: [
@@ -20,4 +20,4 @@ export async function componentRegister() {
       }
     ]
   });
-}
+// }
