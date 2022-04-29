@@ -1,20 +1,22 @@
 import Head from "next/head";
 import { BuilderComponent, builder, Builder } from "@builder.io/react";
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
-// import { componentRegister as backgroundComponentRegister } from "../components/Background";
+import { componentRegister as backgroundComponentRegister } from "../components/Background";
 import '../components/Background';
 import { useRouter } from "next/router";
 builder.init('9064ecf563724ff398dcad37ecf1cafa');
 
 
-// backgroundComponentRegister();
+backgroundComponentRegister();
 
 export default function Home({
   page,
-  // locale,
+  locale,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  // builder.setUserAttributes({ locale: 'en' });
-  
+  builder.setUserAttributes({ locale: 'en' });
+
+  // Page load hadling is needed when fallback is true
+  // https://stackoverflow.com/questions/67787456/what-is-the-difference-between-fallback-false-vs-true-vs-blocking-of-getstaticpa/67787457#67787457
   const router = useRouter()
   if (router.isFallback) {
     return <h1>Loading...</h1>
@@ -44,22 +46,24 @@ export default function Home({
 
 export async function getStaticProps({
   params,
-  // locale = "en",
+  locale = "en",
 }: GetStaticPropsContext<{ page: string }>) {
   const urlPath = params?.page || "";
 
   const page = await builder
     .get("page", {
       userAttributes: { urlPath: `/${urlPath || ""}`}, // locale: locale },
-      // options: { data: { locale: locale } },
+      options: { data: { locale: locale } },
       cachebust: true,
     })
     .promise() || null;
 
+  console.log("in getStaticProps");
+
   return {
     props: {
       page,
-      // locale,
+      locale,
     },
     revalidate: 30,
   };
@@ -72,6 +76,7 @@ export async function getStaticPaths() {
     omit: "data.blocks",
   });
   const paths = pages.map((page) => page.data?.url);
+  console.log("in getStaticPaths", paths);
   return {
     paths,
     fallback: true,
