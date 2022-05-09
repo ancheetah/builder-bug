@@ -4,7 +4,7 @@ import { InferGetStaticPropsType } from "next";
 import { componentRegister as backgroundComponentRegister } from "../components/Background";
 import { useRouter } from "next/router";
 
-builder.init(process.env.NEXT_PUBLIC_BUILDER_IO_KEY);
+builder.init('9064ecf563724ff398dcad37ecf1cafa');
 
 backgroundComponentRegister();
 
@@ -48,7 +48,7 @@ export async function getStaticProps({ params, locale = "en" }) {
       options: { data: { locale: locale } },
       cachebust: true,
     })
-    .toPromise();
+    .toPromise() || null;
 
   return {
     props: {
@@ -65,6 +65,7 @@ export async function getStaticPaths() {
     options: { noTargeting: true },
     omit: "data.blocks",
   });
+  console.log(pages.map((page) => page.data?.url))
   const paths = pages.map((page) => page.data?.url);
   return {
     paths,
