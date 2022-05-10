@@ -1,23 +1,29 @@
 import Head from "next/head";
 import { BuilderComponent, builder, Builder } from "@builder.io/react";
 import { InferGetStaticPropsType } from "next";
-import { componentRegister as backgroundComponentRegister } from "../components/Background";
+// import { componentRegister as backgroundComponentRegister } from "../components/Background";
 import { useRouter } from "next/router";
 
 builder.init('9064ecf563724ff398dcad37ecf1cafa');
 
-backgroundComponentRegister();
+// backgroundComponentRegister();
 
 export default function Home({
   page,
-  locale,
+  // locale,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter();
   if (router.isFallback) {
     return <h1>Loading...</h1>;
   }
 
-  builder.setUserAttributes({ locale });
+  // builder.setUserAttributes({ locale });
+  const isLive = !Builder.isEditing && !Builder.isPreviewing;
+ 
+  if (!page && isLive) {
+    return <div>Not found</div>
+  }
+
   return (
     <div className="container">
       <Head>
@@ -25,27 +31,23 @@ export default function Home({
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
-        {page || Builder.isPreviewing || Builder.isEditing ? (
-          <div>
-            <div>
-              <BuilderComponent content={page} model="page" isChild />
-            </div>
-          </div>
-        ) : (
-          <div>Not found</div>
-        )}
-      </main>
+      {/* <main> */}
+          {/* <div> */}
+            {/* <div> */}
+              <BuilderComponent content={page} model="page" />
+            {/* </div> */}
+          {/* </div> */}
+      {/* </main> */}
     </div>
   );
 }
 
-export async function getStaticProps({ params, locale = "en" }) {
+export async function getStaticProps({ params }) {
   const path = (params.page || []).join("/");
   const page = await builder
     .get("page", {
-      userAttributes: { urlPath: `/${path}`, locale: locale },
-      options: { data: { locale: locale } },
+      userAttributes: { urlPath: `/${path}` },
+      // options: { data: { locale: locale } },
       cachebust: true,
     })
     .toPromise() || null;
@@ -53,9 +55,9 @@ export async function getStaticProps({ params, locale = "en" }) {
   return {
     props: {
       page,
-      locale,
+      // locale,
     },
-    revalidate: 30,
+    revalidate: 5,
   };
 }
 
