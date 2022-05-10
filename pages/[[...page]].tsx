@@ -3,6 +3,7 @@ import { BuilderComponent, builder, Builder } from "@builder.io/react";
 import { InferGetStaticPropsType } from "next";
 // import { componentRegister as backgroundComponentRegister } from "../components/Background";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 builder.init('9064ecf563724ff398dcad37ecf1cafa');
 
@@ -12,37 +13,37 @@ export default function Home({
   page,
   // locale,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
+
   const router = useRouter();
   if (router.isFallback) {
     return <h1>Loading...</h1>;
   }
 
+  const [notFound, setNotFound] = useState(false);
+
   // builder.setUserAttributes({ locale });
-  const isLive = !Builder.isEditing && !Builder.isPreviewing;
- 
-  if (!page && isLive) {
-    return <div>Not found</div>
-  }
-
-  return (
-    <div className="container">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      {/* <main> */}
-          {/* <div> */}
-            {/* <div> */}
-              <BuilderComponent content={page} model="page" />
-            {/* </div> */}
-          {/* </div> */}
-      {/* </main> */}
-    </div>
-  );
+  return <>
+  <Head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    { !page && <meta name="robots" content="noindex" />    }
+  </Head>
+  { page && <Head>
+    <title>Create Next App</title>
+    <link rel="icon" href="/favicon.ico" />
+  </Head> }
+  {notFound && <div>Not found...</div>}
+  <BuilderComponent
+    model="page"
+    // {...page && { content: page }} 
+    contentLoaded={(data) => {
+      if (!data) { setNotFound(true) }
+    }}
+    >
+  </BuilderComponent>
+</>
 }
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps({ params, }) { // ({ params, locale = "en" }) {
   const path = (params.page || []).join("/");
   const page = await builder
     .get("page", {
